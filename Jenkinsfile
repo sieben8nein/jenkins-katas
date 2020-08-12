@@ -22,9 +22,9 @@ pipeline {
           }
           post {
 +              always {
-+                  sh "ls"
++                  sh 'ls'
 +                  deleteDir()
-+                  sh "ls"
++                  sh 'ls'
 +              }
 +          }
         }
