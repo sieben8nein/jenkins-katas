@@ -78,13 +78,16 @@ pipeline {
     stage('component testing') {
       when { 
         beforeAgent true
-        not{
-          branch 'dev/*'
+        anyOf{
+          branch 'master'; 
+          changeRequest()
         }
+        
       }
       steps {
         sh 'ci/component-test.sh'
       }
     }
+    
   }
 }
