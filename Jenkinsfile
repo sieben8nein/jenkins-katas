@@ -4,8 +4,10 @@ pipeline {
     stage('clone down') {
       steps {
         sh 'echo "hello"'
+        stash(excludes: '.git', name: 'code')
       }
     }
+
     stage('parallel execution') {
       parallel {
         stage('sayHello') {
@@ -21,16 +23,17 @@ pipeline {
             }
 
           }
+          post {
+            always {
+              sh 'ls'
+              deleteDir()
+              sh 'ls'
+            }
+
+          }
           steps {
             sh 'ci/build-app.sh'
             archiveArtifacts 'app/build/libs/'
-          }
-          post {
-              always {
-                  sh "ls"
-                  deleteDir()
-                  sh "ls"
-              }
           }
         }
 
