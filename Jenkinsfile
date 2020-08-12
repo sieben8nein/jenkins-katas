@@ -32,9 +32,31 @@ pipeline {
 
           }
           steps {
+            unstash 'code'
             skipDefaultCheckout(true)
             sh 'ci/build-app.sh'
             archiveArtifacts 'app/build/libs/'
+          }
+        }
+        stage('unit test') {
+          agent {
+            docker {
+              image 'gradle:jdk11'
+            }
+
+          }
+          post {
+            always {
+              sh 'ls'
+              deleteDir()
+              sh 'ls'
+            }
+
+          }
+          steps {
+            unstash 'code'
+            sh 'ci/unit-test-app.sh'
+            junit 'app/build/test-results/test/TEST-*.xml'
           }
         }
 
