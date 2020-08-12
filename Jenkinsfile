@@ -63,6 +63,7 @@ pipeline {
       }
     }
     stage('push docker app') {
+      when { branch "master"}
       environment {
         DOCKERCREDS = credentials('docker_login') //use the credentials just created in this stage
       }
@@ -70,8 +71,19 @@ pipeline {
         unstash 'code' //unstash the repository code
         sh 'ci/build-docker.sh'
         sh 'echo "$DOCKERCREDS_PSW" | docker login -u "$DOCKERCREDS_USR" --password-stdin' //login to docker hub with the credentials above
-        input message: 'push to docker?', ok: "yes"
+        //input message: 'push to docker?', ok: "yes"
         sh 'ci/push-docker.sh'
+      }
+    }
+    stage('component testing') {
+      when { 
+        beforeAgent true
+        not{
+          branch 'dev/*'
+        }
+      }
+      steps {
+        sh 'ci/component-test.sh'
       }
     }
   }
