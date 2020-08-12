@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  environment {
+    docker_username = credentials('sieben8nein') 
+  }
   stages {
     stage('clone down') {
       steps {
@@ -43,7 +46,6 @@ pipeline {
             docker {
               image 'gradle:jdk11'
             }
-
           }
           post {
             always {
@@ -51,7 +53,6 @@ pipeline {
               deleteDir()
               sh 'ls'
             }
-
           }
           steps {
             unstash 'code'
@@ -59,9 +60,23 @@ pipeline {
             junit 'app/build/test-results/test/TEST-*.xml'
           }
         }
-
+        stage('push docker app') {
+          agent {
+            docker {
+              image 'gradle:jdk11'
+            }
+          }
+          environment {
+            DOCKERCREDS = credentials('docker_login') //use the credentials just created in this stage
+          }
+          steps {
+            unstash 'code' //unstash the repository code
+            sh 'ci/build-docker.sh'
+            sh 'echo "$DOCKERCREDS_PSW" | docker login -u "$DOCKERCREDS_USR" --password-stdin' //login to docker hub with the credentials above
+            sh 'ci/push-docker.sh'
+          }
+        }
       }
     }
-
   }
 }
