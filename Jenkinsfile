@@ -60,7 +60,9 @@ pipeline {
             junit 'app/build/test-results/test/TEST-*.xml'
           }
         }
-        stage('push docker app') {
+      }
+    }
+    stage('push docker app') {
           agent {
             docker {
               image 'gradle:jdk11'
@@ -76,7 +78,5 @@ pipeline {
             sh 'ci/push-docker.sh'
           }
         }
-      }
-    }
   }
 }
