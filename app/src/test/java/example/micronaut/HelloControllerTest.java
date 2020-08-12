@@ -36,5 +36,9 @@ public class HelloControllerTest {
         
         
     }
-
+    @Test
+    public void testFail() {
+        
+        assertEquals("this", "fails");
+    }
 }
