@@ -33,7 +33,5 @@ public class HelloControllerTest {
         HelloController sut = new HelloController();
         System.out.println("testing");
         assertEquals("Hello "+name, sut.combineName(name),"Name and greeting not properly combined");
-        
-        
     }
 }
