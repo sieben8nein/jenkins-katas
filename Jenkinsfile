@@ -37,7 +37,8 @@ pipeline {
             unstash 'code'
             skipDefaultCheckout(true)
             sh 'ci/build-app.sh'
-            archiveArtifacts 'app/build/libs/'
+            archiveArtifacts 'app/build/libs/'^
+            stash(excludes: '.git', name: 'code')
           }
         }
         stage('unit test') {
